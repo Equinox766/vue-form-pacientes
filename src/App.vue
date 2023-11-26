@@ -1,9 +1,11 @@
 <script setup>
-import {ref, reactive, onMounted, watch} from "vue";
+import {ref, reactive, watch, onMounted} from "vue";
 import { uid } from 'uid';
 import Header from './components/Header.vue';
 import Form from './components/Form.vue';
 import Paciente from './components/Paciente.vue';
+
+const pacientes = ref([]);
 
 const paciente = reactive({
   id: null,
@@ -14,12 +16,27 @@ const paciente = reactive({
   sintomas: '',
 });
 
-const pacientes = ref([]);
+watch(pacientes, () => {
+  saveToLocalStorage()
+}, {
+  deep: true
+})
+
+const saveToLocalStorage = () => {
+  localStorage.setItem('pacientes', JSON.stringify(pacientes.value))
+}
+
+onMounted(() => {
+  const pacientesStorage = localStorage.getItem('pacientes')
+  if (pacientesStorage) {
+    pacientes.value = JSON.parse(pacientesStorage)
+  }
+})
 
 const savePaciente = () => {
   if (paciente.id) {
     const { id } = paciente;
-    const i = pacientes.value.findIndex(paciente => paciente.id === id)
+    const i = pacientes.value.findIndex((pacienteState) => pacienteState.id === id)
     pacientes.value[i] = { ...paciente}
   } else {
     pacientes.value.push({
@@ -28,12 +45,14 @@ const savePaciente = () => {
     });
   }
 
+
   Object.assign(paciente, {
     nombre: '',
     propietario: '',
     email: '',
     alta: '',
     sintomas: '',
+    id: null,
   })
 }
 
@@ -41,7 +60,6 @@ const updatePaciente = (id) => {
   const pacienteEdit = pacientes.value.filter(paciente => paciente.id === id)[0]
   Object.assign(paciente, pacienteEdit)
 }
-
 const deletePaciente = (id) => {
   pacientes.value = pacientes.value.filter(paciente => paciente.id !== id)
 }
