@@ -79,7 +79,7 @@ const validar = () => {
       </div>
       <div class="mb-5">
         <label for="alta" class="block text-gray-700 uppercase font-bold">
-          Alta del Propietario:
+          Alta:
         </label>
         <input type="date" id="alta" class="border-2 w-full p-2 placeholder-gray-400 rounded-md"
                @input="$emit('update:alta', $event.target.value)">

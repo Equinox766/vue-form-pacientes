@@ -1,7 +1,8 @@
 <script setup>
 import {ref, reactive} from "vue";
-import Header from './components/Header.vue'
-import Form from './components/Form.vue'
+import Header from './components/Header.vue';
+import Form from './components/Form.vue';
+import Paciente from './components/Paciente.vue';
 
 const paciente = reactive({
   nombre: '',
@@ -14,7 +15,17 @@ const paciente = reactive({
 const pacientes = ref([]);
 
 const savePaciente = () => {
-  pacientes.value.push(paciente);
+  pacientes.value.push({
+    ...paciente
+  });
+
+  Object.assign(paciente, {
+    nombre: '',
+    propietario: '',
+    email: '',
+    alta: '',
+    sintomas: '',
+  })
 }
 </script>
 
@@ -33,6 +44,14 @@ const savePaciente = () => {
       <div class="md:w-1/2 md:h-screen overflow-y-scroll ">
         <h3 class="font-black text-3xl text-center">Administra tus Pacientes</h3>
         <div v-if="pacientes.length > 0" class="">
+          <p class="text-lg mt-5 text-center mb-10">
+            Información de
+            <span class="text-indigo-600 font-bold">Pacientes</span>
+          </p>
+          <Paciente
+            v-for="paciente in pacientes"
+            :paciente="paciente"
+          />
         </div>
         <p v-else class="mt-10 text-2xl text-center">No Hay Pacientes</p>
       </div>
