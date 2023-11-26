@@ -1,10 +1,12 @@
 <script setup>
 import {ref, reactive} from "vue";
+import { uid } from 'uid';
 import Header from './components/Header.vue';
 import Form from './components/Form.vue';
 import Paciente from './components/Paciente.vue';
 
 const paciente = reactive({
+  id: null,
   nombre: '',
   propietario: '',
   email: '',
@@ -15,9 +17,17 @@ const paciente = reactive({
 const pacientes = ref([]);
 
 const savePaciente = () => {
-  pacientes.value.push({
-    ...paciente
-  });
+  if (paciente.id) {
+    const { id } = paciente;
+    const i = pacientes.value.findIndex((pacienteState) => pacienteState.id === id)
+    pacientes.value[i] = { ...paciente}
+  } else {
+    pacientes.value.push({
+      ...paciente,
+      id: uid()
+    });
+  }
+
 
   Object.assign(paciente, {
     nombre: '',
@@ -26,6 +36,11 @@ const savePaciente = () => {
     alta: '',
     sintomas: '',
   })
+}
+
+const updatePaciente = (id) => {
+  const pacienteEdit = pacientes.value.filter(paciente => paciente.id === id)[0]
+  Object.assign(paciente, pacienteEdit)
 }
 </script>
 
@@ -40,6 +55,7 @@ const savePaciente = () => {
           v-model:alta="paciente.alta"
           v-model:sintomas="paciente.sintomas"
           @save-paciente="savePaciente"
+          :id="paciente.id"
       />
       <div class="md:w-1/2 md:h-screen overflow-y-scroll ">
         <h3 class="font-black text-3xl text-center">Administra tus Pacientes</h3>
@@ -51,6 +67,7 @@ const savePaciente = () => {
           <Paciente
             v-for="paciente in pacientes"
             :paciente="paciente"
+            @update-paciente="updatePaciente"
           />
         </div>
         <p v-else class="mt-10 text-2xl text-center">No Hay Pacientes</p>
