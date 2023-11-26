@@ -1,5 +1,5 @@
 <script setup>
-import {ref, reactive} from "vue";
+import {ref, reactive, onMounted, watch} from "vue";
 import { uid } from 'uid';
 import Header from './components/Header.vue';
 import Form from './components/Form.vue';
@@ -19,7 +19,7 @@ const pacientes = ref([]);
 const savePaciente = () => {
   if (paciente.id) {
     const { id } = paciente;
-    const i = pacientes.value.findIndex((pacienteState) => pacienteState.id === id)
+    const i = pacientes.value.findIndex(paciente => paciente.id === id)
     pacientes.value[i] = { ...paciente}
   } else {
     pacientes.value.push({
@@ -27,7 +27,6 @@ const savePaciente = () => {
       id: uid()
     });
   }
-
 
   Object.assign(paciente, {
     nombre: '',
@@ -41,6 +40,10 @@ const savePaciente = () => {
 const updatePaciente = (id) => {
   const pacienteEdit = pacientes.value.filter(paciente => paciente.id === id)[0]
   Object.assign(paciente, pacienteEdit)
+}
+
+const deletePaciente = (id) => {
+  pacientes.value = pacientes.value.filter(paciente => paciente.id !== id)
 }
 </script>
 
@@ -68,6 +71,7 @@ const updatePaciente = (id) => {
             v-for="paciente in pacientes"
             :paciente="paciente"
             @update-paciente="updatePaciente"
+            @delete-paciente="deletePaciente"
           />
         </div>
         <p v-else class="mt-10 text-2xl text-center">No Hay Pacientes</p>

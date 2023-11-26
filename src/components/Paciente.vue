@@ -6,7 +6,7 @@ defineProps({
   }
 })
 
-defineEmits(['update-paciente'])
+defineEmits(['update-paciente', 'delete-paciente'])
 </script>
 <template>
   <div class="mx-5 my-10 bg-white shadow-md px-5 py-10 rounded-xl">
@@ -45,6 +45,7 @@ defineEmits(['update-paciente'])
       <button
           type="button"
           class="block w-full py-2 px-10 bg-red-600 hover:bg-red-700 text-white font-bold uppercase rounded-lg"
+          @click="$emit('delete-paciente', paciente.id)"
       >Eliminar
       </button>
     </div>
